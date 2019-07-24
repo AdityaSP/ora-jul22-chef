@@ -1,0 +1,60 @@
+Intg
+1. clone git repository
+git clone https://github.com/AdityaSP/MyAppDemo
+
+2. compile and build -> creats an artifact
+mvn install
+
+Delivery
+
+Check platform
+
+chef generate cookbook platform
+vi platform/recipes/default.rb
+svcs =['mysql','tomcat7']
+
+svcs.each do |svc|
+  service svc do
+    action :start
+  end
+end
+
+
+Deploy 
+3. compile the db script
+Manual Step: mysql -uroot -proot < dbrelease/databaserelease.sql
+
+chef generate cookbook appdb
+vi appdb/recipes/default.rb
+cookbook_file '/tmp/databaserelease.sql' do
+  source 'databaserelease.sql'
+end
+
+script 'dbcompile' do
+  interpreter 'bash'
+  code 'mysql -uroot -proot < /tmp/databaserelease.sql'
+end
+
+file '/tmp/databaserelease.sql' do
+  action :delete
+end
+
+mkdir appdb/files
+cp ../MyAppDemo/dbrelease/databaserelease.sql appdb/files/
+
+
+4. deploy artifact into tomcat's location /var/lib/tomcat7/webapps
+Manual Step: cp target/MyAppDemo.war /var/lib/tomcat7/webapps
+
+chef generate cookbook app
+mkdir app/files
+cp ../MyAppDemo/target/MyAppDemo.war app/files
+vi app/recipes/default.rb
+cookbook_file '/var/lib/tomcat7/webapps/MyAppDemo.war' do
+  source 'MyAppDemo.war'
+end
+
+
+
+
+
