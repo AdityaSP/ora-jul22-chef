@@ -1,0 +1,33 @@
+step1
+
+3 machines
+workstation
+server
+node
+
+step2
+
+workstation : chefdk
+https://docs.chef.io/install_dk.html
+
+server :
+https://docs.chef.io/install_server.html
+sudo chef-server-ctl reconfigure
+
+step3
+Create admin user on chef-server
+
+sudo chef-server-ctl user-create admin101 aditya sp sp.aditya+1@gmail.com admin101 --filename ./admin101.pem
+
+step4
+Create organization
+
+sudo chef-server-ctl org-create secondorg secondorgcompany --association_user admin101 --filename ./secondorg.pem
+
+now we can start to link workstation with server
+step5
+collect admin101.pem and place it in .chef folder on workstation
+
+step6
+create knife.rb and place it in .chef folder
+provide right admin pem and right org shortname created in step3 and step4
